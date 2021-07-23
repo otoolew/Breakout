@@ -8,7 +8,7 @@ public class Ball : MonoBehaviour
     [SerializeField, Range(1,40)] private float maxVelocity;
     public float MaxVelocity { get => maxVelocity; set => maxVelocity = value; }
     
-    public Vector2 direction;
+    private Vector2 direction;
     
     [SerializeField] private Bounds bounds;
     public Bounds Bounds { get => bounds; set => bounds = value; }

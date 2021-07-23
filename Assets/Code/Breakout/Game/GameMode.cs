@@ -2,8 +2,8 @@ using System.Collections;
 using UnityEngine;
 
 
-[CreateAssetMenu(menuName = "Breakout/GameMode", fileName = "newGameMode")]
-public class GameMode : ScriptableObject
+//[CreateAssetMenu(menuName = "Breakout/GameMode", fileName = "newGameMode")]
+public class GameMode : MonoBehaviour
 {
     [SerializeField] private GameState gameState;
     public GameState GameState { get => gameState; set => gameState = value; }
