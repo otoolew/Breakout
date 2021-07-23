@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 882ba3c69fae97d4aad04e16e3b5343d, type: 3}
+  m_Name: Classic
+  m_EditorClassIdentifier: 
+  ballPrefab: {fileID: 7681387979649833551, guid: a0d5fc39932b0b041af1efe51ef05417, type: 3}
+  ball: {fileID: 0}
+  bounds:
+    xMin: -17.75
+    xMax: 17.75
+    yMin: 0
+    yMax: 20
