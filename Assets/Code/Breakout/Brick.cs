@@ -4,15 +4,6 @@ using UnityEngine;
 
 public class Brick : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    [SerializeField] private int pointValue;
+    public int PointValue { get => pointValue; set => pointValue = value; }
 }

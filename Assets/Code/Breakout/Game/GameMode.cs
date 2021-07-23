@@ -1,38 +1,38 @@
 using System.Collections;
 using UnityEngine;
 
+
 [CreateAssetMenu(menuName = "Breakout/GameMode", fileName = "newGameMode")]
 public class GameMode : ScriptableObject
 {
+    [SerializeField] private GameState gameState;
+    public GameState GameState { get => gameState; set => gameState = value; }
+    
+    [SerializeField] private MatchState matchState;
+    public MatchState MatchState { get => matchState; set => matchState = value; }
+    
+    [SerializeField] private Bumper bumperPrefab;
+    public Bumper BumperPrefab { get => bumperPrefab; set => bumperPrefab = value; }
+    
     [SerializeField] private Ball ballPrefab;
     public Ball BallPrefab { get => ballPrefab; set => ballPrefab = value; }
-    
-    [SerializeField] private Ball ball;
-    public Ball Ball { get => ball; set => ball = value; }
-    
+
     [SerializeField] private Bounds bounds;
     public Bounds Bounds { get => bounds; set => bounds = value; }
 
-    // Start is called before the first frame update
-    void Start()
+    public void SetUpMatch()
     {
-        //StartCoroutine(StartGameRoutine());
+        matchState = MatchState.SERVING;
     }
 
-    // Update is called once per frame
-    void Update()
+    IEnumerator EnterServeState()
     {
-    }
-
-    public void StartGame()
-    { 
-
-    }
-
-    IEnumerator StartGameRoutine()
-    {
-        yield return new WaitForSeconds(1.0f);
-        ball = Instantiate(ballPrefab, new Vector3(0, -7.25f, 0), Quaternion.identity);
+        Debug.Log("Server State");
+        while (matchState == MatchState.SERVING)
+        {
+            yield return null;
+        }
         
+        yield return null;
     }
 }

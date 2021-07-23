@@ -8,13 +8,20 @@ public class Ball : MonoBehaviour
     [SerializeField, Range(1,40)] private float maxVelocity;
     public float MaxVelocity { get => maxVelocity; set => maxVelocity = value; }
     
-    private Vector2 direction;
+    public Vector2 direction;
     
     [SerializeField] private Bounds bounds;
     public Bounds Bounds { get => bounds; set => bounds = value; }
+    
     #region Monobehaviour ---------------------------------------------------------------------------------------------
     private void Start()
     {
+        StartCoroutine(DelayedStart());
+    }
+
+    IEnumerator DelayedStart()
+    {
+        yield return new WaitForSeconds(1); //Skip one frame
         direction = Vector2.up;
     }
     
@@ -28,10 +35,12 @@ public class Ball : MonoBehaviour
         direction = Vector3.Reflect(direction, other.GetContact(0).normal);
         if (other.gameObject.CompareTag("Brick"))
         {
-            Destroy(other.gameObject);
+            Destroy(other.gameObject,0.01f);
         }
     }
-    #endregion --------------------------------------------------------------------------------------------------------
+    #endregion 
+
+    #region Ball Movement ---------------------------------------------------------------------------------------------
     public void Move(Vector2 direction)
     {
         this.direction = direction;
@@ -76,7 +85,9 @@ public class Ball : MonoBehaviour
         normal =Vector2.zero; 
         return false;
     }
-    
+    #endregion
+
+    #region Debugging -------------------------------------------------------------------------------------------------
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
@@ -88,4 +99,6 @@ public class Ball : MonoBehaviour
         Gizmos.DrawLine(new Vector2(bounds.XMax,bounds.YMax),new Vector2(bounds.XMin,bounds.YMax)); // 2-3
         Gizmos.DrawLine(new Vector2(bounds.XMin,bounds.YMax),new Vector2(bounds.XMin,bounds.YMin)); // 3-4
     }
+    #endregion
+
 }
