@@ -16,16 +16,13 @@ public class GameManager : MonoBehaviour
     /// Gets whether an instance of this singleton exists
     /// </summary>
     public static bool InstanceExists => Instance != null;
-    
-    [SerializeField] private CanvasGroup sceneFadeComp;
-    public CanvasGroup SceneFadeComp { get => sceneFadeComp; set => sceneFadeComp = value; }
-    [SerializeField] private float sceneFadeDuration;
-    [SerializeField] private bool inSceneTransition;
 
-    [SerializeField] private GameMode gameMode;
-    public GameMode GameMode { get => gameMode; set => gameMode = value; }
+    [SerializeField] private MainCanvas mainCanvas;
+    public MainCanvas MainCanvas { get => mainCanvas; set => mainCanvas = value; }
     
-    #endregion  
+    [SerializeField] private GameState gameState;
+    public GameState GameState { get => gameState; set => gameState = value; }
+    #endregion
     
     #region Monobehaviour ---------------------------------------------------------------------------------------------
     /// <summary>
@@ -61,44 +58,13 @@ public class GameManager : MonoBehaviour
             Instance = null;
         }
     }
-    #endregion 
-    
-    #region Scene Management ------------------------------------------------------------------------------------------
-    public void LoadScene(string sceneName)
-    {
-        if (!inSceneTransition)
-        {
-            StartCoroutine(FadeAndSwitchScenes(sceneName));
-        }
-    }
-
-    private IEnumerator FadeAndSwitchScenes(string sceneName)
-    {
-        yield return StartCoroutine(Fade(1));
-        yield return SceneManager.LoadSceneAsync(sceneName);
-        yield return new WaitForSeconds(1);
-        yield return StartCoroutine(Fade(0));
-    }
-    
-    private IEnumerator Fade(float finalAlpha)
-    {
-        inSceneTransition = true;
-        sceneFadeComp.blocksRaycasts = true; // Blocks player Clicking on other Scene or UI GameObjects
-        float fadeSpeed = Mathf.Abs(sceneFadeComp.alpha - finalAlpha) / sceneFadeDuration;
-        while (!Mathf.Approximately(sceneFadeComp.alpha, finalAlpha))
-        {
-            sceneFadeComp.alpha = Mathf.MoveTowards(sceneFadeComp.alpha, finalAlpha,
-                fadeSpeed * Time.deltaTime);
-            yield return null; // Wait 1 frame
-        }
-        inSceneTransition = false;
-        sceneFadeComp.blocksRaycasts = false;
-    }
     #endregion
     
-    private void OnDrawGizmos()
+    #region Game State ---------------------------------------------------------------------------------------------
+
+    public void PauseGame()
     {
-        Gizmos.color = Color.green;
-        //Gizmos.DrawLine();
+        
     }
+    #endregion
 }

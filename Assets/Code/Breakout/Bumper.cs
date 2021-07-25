@@ -8,7 +8,7 @@ public class Bumper : MonoBehaviour
     [SerializeField] private float moveSpeed;
     public float MoveSpeed { get => moveSpeed; set => moveSpeed = value; }
     
-    public Vector2 moveAxis;
+    private Vector2 moveAxis;
     
     private void Update()
     {
