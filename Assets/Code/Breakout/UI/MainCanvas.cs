@@ -4,18 +4,22 @@ using UnityEngine;
 
 public class MainCanvas : MonoBehaviour
 {
-    [SerializeField] private Stack<IPanel> panelStack;
-    public Stack<IPanel> PanelStack { get => panelStack; set => panelStack = value; }
+    [SerializeField] private Score highScore;
+    public Score HighScore { get => highScore; set => highScore = value; }
     
-    // Start is called before the first frame update
-    void Start()
+    [SerializeField] private GameObject pauseMenu;
+    public GameObject PauseMenu { get => pauseMenu; set => pauseMenu = value; }
+    
+    [SerializeField] private ScorePanel scorePanel;
+    public ScorePanel ScorePanel { get => scorePanel; set => scorePanel = value; }
+    
+    public void SetPauseMenuActive(bool value)
     {
-        
+        pauseMenu.SetActive(value);
     }
 
-    // Update is called once per frame
-    void Update()
+    public void SetHighScore(int value)
     {
-        
+        scorePanel.HighScoreText.text = highScore.Value.ToString();
     }
 }

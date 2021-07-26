@@ -13,7 +13,7 @@ public class ScorePanel : MonoBehaviour
     
     public void UpdateCurrentScore(int value)
     {
-        highScoreText.text = "Current Score " + value;
+        currentScore.text = "Current Score " + value;
     }
     
     public void UpdateHighScore(int value)

@@ -14,7 +14,7 @@ public class Ball : MonoBehaviour
     [SerializeField] private Bounds bounds;
     public Bounds Bounds { get => bounds; set => bounds = value; }
 
-    public UnityAction onBallOutOfBounds;
+    public UnityAction BallOutOfBounds;
     
     #region Monobehaviour ---------------------------------------------------------------------------------------------
     private void Start()
@@ -25,7 +25,7 @@ public class Ball : MonoBehaviour
     IEnumerator DelayedStart()
     {
         yield return new WaitForSeconds(1); //Skip one frame
-        direction = Vector2.up;
+        direction = Vector2.up + Vector2.right;
     }
     
     private void FixedUpdate()
@@ -36,10 +36,16 @@ public class Ball : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D other)
     {
         direction = Vector3.Reflect(direction, other.GetContact(0).normal);
-        // if (other.gameObject.CompareTag("Brick"))
-        // {
-        //     Destroy(other.gameObject,0.01f);
-        // }
+        if (other.gameObject.CompareTag("Brick"))
+        {
+            Brick brick = other.collider.GetComponent<Brick>();
+            if (brick != null)
+            {
+                Debug.Log(brick.name + " was hit");
+            }
+
+            Destroy(other.gameObject, 0.01f);
+        }
     }
     #endregion 
 
@@ -87,7 +93,10 @@ public class Ball : MonoBehaviour
         
         if (currentPosition.y < bounds.YMin)
         {
-            onBallOutOfBounds?.Invoke();
+            direction = Vector3.zero;
+            transform.position = Vector3.up;
+            Debug.DrawRay(transform.position, Vector3.down, Color.red, 60);
+            BallOutOfBounds?.Invoke();
         }
         
         normal = Vector2.zero; 

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
@@ -22,6 +23,12 @@ public class GameManager : MonoBehaviour
     
     [SerializeField] private GameState gameState;
     public GameState GameState { get => gameState; set => gameState = value; }
+    
+    [SerializeField] private GameMode gameMode;
+    public GameMode GameMode { get => gameMode; set => gameMode = value; }
+    
+
+    
     #endregion
     
     #region Monobehaviour ---------------------------------------------------------------------------------------------
@@ -60,11 +67,56 @@ public class GameManager : MonoBehaviour
     }
     #endregion
     
-    #region Game State ---------------------------------------------------------------------------------------------
-
+    #region Game State ------------------------------------------------------------------------------------------------
+    /// <summary>
+    /// Pauses the game.
+    /// </summary>
     public void PauseGame()
     {
-        
+        if (gameState == GameState.PAUSED)
+        {
+            mainCanvas.SetPauseMenuActive(true);
+            gameState = GameState.RUNNING;
+            Time.timeScale = 1.0f;
+        }
+        else
+        {
+            mainCanvas.SetPauseMenuActive(false);
+            gameState = GameState.PAUSED;
+            Time.timeScale = 0.0f;
+        }
     }
+    /// <summary>
+    /// Resumes the game.
+    /// </summary>
+    public void ResumeGame()
+    {
+        gameState = GameState.RUNNING;
+        Time.timeScale = 1.0f;
+    }
+    /// <summary>
+    /// Quits the game.
+    /// </summary>
+    public void QuitGame()
+    {
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false; // Used to Quit in Editor
+#else
+        Application.Quit();
+#endif
+    }
+    #endregion
+    
+    #region Scene Managment -------------------------------------------------------------------------------------------
+    public void LoadScene(GameModeData gameModeData)
+    {
+        SceneManager.LoadSceneAsync(gameModeData.SceneInfo.SceneName).completed += OnSceneLoadComplete;
+    }
+    private void OnSceneLoadComplete(AsyncOperation obj)
+    {
+        Debug.Log("Completed Scene Load");
+        gameMode = FindObjectOfType<GameMode>();
+    }
+    
     #endregion
 }
