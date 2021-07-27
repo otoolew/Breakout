@@ -1,33 +1,51 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
+/// <summary>
+/// The Game Ball
+/// </summary>
 public class Ball : MonoBehaviour
 {
-    [SerializeField, Range(1,40)] private float maxVelocity;
-    public float MaxVelocity { get => maxVelocity; set => maxVelocity = value; }
+    #region Fields and Properties -------------------------------------------------------------------------------------
+    /// <summary>
+    /// The desired ball velocity
+    /// </summary>
+    [SerializeField, Range(10,30)] private float moveSpeed;
     
-    private Vector2 direction;
+    /// <summary>
+    /// The balls movement direction
+    /// </summary>
+    [SerializeField] private Vector2 direction;
     
     [SerializeField] private Bounds bounds;
+    /// <summary>
+    /// The bounds the ball must stay within
+    /// </summary>
     public Bounds Bounds { get => bounds; set => bounds = value; }
+    
+    [SerializeField] private Vector2 startPosition;
+    /// <summary>
+    /// The Starting Position of the Bumper
+    /// </summary>
+    public Vector2 StartPosition { get => startPosition; set => startPosition = value; }
+    #endregion
 
+    #region Delegates -------------------------------------------------------------------------------------------------
+    /// <summary>
+    /// Unity Action that fires when the ball falls into the bottom bounds aka kill zone.
+    /// </summary>
     public UnityAction BallOutOfBounds;
+    #endregion
     
     #region Monobehaviour ---------------------------------------------------------------------------------------------
+
     private void Start()
     {
-        StartCoroutine(DelayedStart());
+        ResetToStartPosition();
     }
 
-    IEnumerator DelayedStart()
-    {
-        yield return new WaitForSeconds(1); //Skip one frame
-        direction = Vector2.up + Vector2.right;
-    }
-    
     private void FixedUpdate()
     {
         Move(direction);
@@ -36,76 +54,84 @@ public class Ball : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D other)
     {
         direction = Vector3.Reflect(direction, other.GetContact(0).normal);
-        if (other.gameObject.CompareTag("Brick"))
-        {
-            Destroy(other.gameObject, 0.01f);
-        }
     }
+    
     #endregion 
 
     #region Ball Movement ---------------------------------------------------------------------------------------------
+    /// <summary>
+    /// Moves the ball in a direction at a set speed.
+    /// </summary>
+    /// <param name="direction">The direction the ball is moving.</param>
     public void Move(Vector2 direction)
     {
         this.direction = direction;
-        
-        transform.Translate(direction * (Time.deltaTime * maxVelocity));
+        // Moves the ball by translating the transform position in a direction over a distance 
+        // determined by multiplying the seconds from the last frame to the current one by desired moveSpeed
+        transform.Translate(direction * (Time.deltaTime * moveSpeed)); 
         
         if (OutOfBounds(out Vector2 normal))
         {
+            // Compensates for over shooting the bounds by placing the ball at the intended point of contact.  
             Vector2 positionCorrection = new Vector2(Mathf.Clamp(transform.position.x, bounds.XMin, bounds.XMax),
                 Mathf.Clamp(transform.position.y, bounds.YMin, bounds.YMax));
 
-            transform.position = positionCorrection;
+            transform.position = positionCorrection; // Move the ball to the corrected position.
             
-            this.direction = Vector2.Reflect(direction, normal.normalized);
-            Debug.DrawRay(transform.position, this.direction * 2, Color.yellow, 600);
+            this.direction = Vector2.Reflect(direction, normal.normalized); // Bounce off the bounds normal. 
         }
     }
-
+    /// <summary>
+    /// Checks if the Game Ball is out of bounds.
+    /// </summary>
+    /// <param name="normal">The Vector2 normal use to calculate the ball bounce.</param>
+    /// <returns>True if ball is out of bounds</returns>
     private bool OutOfBounds(out Vector2 normal)
     {
         Vector2 currentPosition = transform.position;
         
-        if (currentPosition.x > bounds.XMax)
+        if (currentPosition.x > bounds.XMax) // Out of Right bound
         {
             normal = Vector2.left;
             return true;
         }
 
-        if (currentPosition.x < bounds.XMin)
+        if (currentPosition.x < bounds.XMin) // Out of Left bound
         {
             normal = Vector2.right;
             return true;
         }
-
-
-        if (currentPosition.y > bounds.YMax)
+        
+        if (currentPosition.y > bounds.YMax) // Out of Top bound
         {
             normal = Vector2.down;
             return true;
         }
         
-        if (currentPosition.y < bounds.YMin)
+        if (currentPosition.y < bounds.YMin)// Out of Bottom bound. 
         {
-            direction = Vector3.zero;
-            transform.position = Vector3.up;
-            Debug.DrawRay(transform.position, Vector3.down, Color.red, 60);
+            direction = Vector3.zero; // Stops ball
+            ResetToStartPosition();
             BallOutOfBounds?.Invoke();
         }
         
-        normal = Vector2.zero; 
+        normal = Vector2.zero; // Set the out to zero
         return false;
     }
-    #endregion
-
-    #region Debugging -------------------------------------------------------------------------------------------------
-    private void OnDrawGizmos()
+    
+    /// <summary>
+    /// Resets the bumper to the start position.
+    /// </summary>
+    public void ResetToStartPosition()
     {
-        Gizmos.color = Color.red;
-        Gizmos.DrawRay(transform.position, direction * 1.0f);
-
-
+        transform.position = startPosition;
+    }
+    /// <summary>
+    /// Resets the bumper to the start position.
+    /// </summary>
+    public void ResetDirection()
+    {
+        direction = Vector2.zero;
     }
     #endregion
-
 }

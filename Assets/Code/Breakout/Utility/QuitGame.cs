@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+/// <summary>
+/// Quits the Application
+/// </summary>
 public class QuitGame : MonoBehaviour
 {
     /// <summary>

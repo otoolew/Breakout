@@ -1,37 +1,64 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
+/// <summary>
+/// Breakout Classic Game Mode
+/// </summary>
 [CreateAssetMenu(menuName = "Breakout/Game Mode Data/Classic Mode", fileName = "ClassicMode")]
 public class ClassicGameMode : GameModeData
 {
+    #region Fields and Properties -------------------------------------------------------------------------------------
+    /// <summary>
+    /// The Scene Info that this Game Mode uses to load its scene
+    /// </summary>
     [SerializeField] private SceneInfo sceneInfo;
     public override SceneInfo SceneInfo { get => sceneInfo; set => sceneInfo = value; }
     
+    /// <summary>
+    /// Description of the game mode
+    /// </summary>
     [SerializeField, TextArea] private string gameModeDescription;
     public override string GameModeDescription { get => gameModeDescription; set => gameModeDescription = value; }
-
-    [SerializeField] private Bumper bumperPrefab;
-    protected override Bumper BumperPrefab { get => bumperPrefab; set => bumperPrefab = value; }
     
-    [SerializeField] private Ball ballPrefab;
-    protected override Ball BallPrefab { get => ballPrefab; set => ballPrefab = value; }
-
+    [SerializeField] private Brick brickPrefab;
+    public override Brick BrickPrefab { get => brickPrefab; set => brickPrefab = value; }
+    
+    /// <summary>
+    /// The gameplay bounds
+    /// </summary>
     [SerializeField] private Bounds bounds;
     public override Bounds Bounds { get => bounds; set => bounds = value; }
-
+    
+    /// <summary>
+    /// Stores the high score for this game Mode
+    /// </summary>
     [SerializeField] private int highScore;
     public override int HighScore { get => highScore; set => highScore = value; }
     
+    /// <summary>
+    /// Number of balls the player can lose.
+    /// </summary>
     [SerializeField] private int ballLimit;
-    public int BallLimit { get => ballLimit; set => ballLimit = value; }
+    #endregion
     
+    /// <summary>
+    /// Sets the Match up for classic play.
+    /// </summary>
+    /// <param name="game"></param>
     public override void SetUpMatch(GameMode game)
     {
         base.SetUpMatch(game);
-        game.HitPoints = ballLimit;
-        game.MainCanvas.ScorePanel.SetHitPoints(ballLimit);
+        game.HitPoints = ballLimit; // Sets hit points to ball limit.
+        game.MainCanvas.ScorePanel.SetHitPoints(ballLimit); // Updates hit points UI
+        game.Ball.ResetToStartPosition();
+        game.ServeBall();
     }
     
+    /// <summary>
+    /// Resets the game ball and updates balls remaining.
+    /// </summary>
+    /// <param name="game"></param>
     public override void ResetMatch(GameMode game)
     {
         base.ResetMatch(game);
@@ -40,17 +67,15 @@ public class ClassicGameMode : GameModeData
         
         if (game.HitPoints > 0)
         {
-            game.StartCoroutine(DelayedReset(game));
+            game.Ball.ResetToStartPosition();
+            game.Ball.ResetDirection();
+            game.ServeBall();
         }
         else
         {
+            game.Ball.ResetToStartPosition();
             game.MainCanvas.SetGameLostMenuActive(true);
         }
     }
-
-    private IEnumerator DelayedReset(GameMode game)
-    {
-        yield return new WaitForSeconds(1);
-        game.Ball.Move(Vector2.up + Vector2.right);
-    }
+    
 }

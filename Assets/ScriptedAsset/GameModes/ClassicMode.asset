@@ -14,12 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sceneInfo: {fileID: 11400000, guid: 7ca89944aa97e974e92dc492ef1e4691, type: 2}
   gameModeDescription: Classic Mode with Limited amount of tries
-  bumperPrefab: {fileID: 2278514419669166964, guid: 3f8114b851a35254b8291864f3f344d9, type: 3}
-  ballPrefab: {fileID: 7681387979649833551, guid: a0d5fc39932b0b041af1efe51ef05417, type: 3}
+  brickPrefab: {fileID: 8329730894081007507, guid: 28d0ddb2ed6ec0046a7a553a13ad04ba, type: 3}
   bounds:
     xMin: -17.75
     xMax: 17.75
     yMin: -2
     yMax: 20
-  highScore: 19
+  highScore: 0
   ballLimit: 3

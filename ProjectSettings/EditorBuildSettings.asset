@@ -11,7 +11,4 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/ClassicModeScene.unity
     guid: f298ec502922e7e418541968bca8782a
-  - enabled: 1
-    path: Assets/Scenes/EndlessModeScene.unity
-    guid: 916a335754b981749bde317741c2478c
   m_configObjects: {}
