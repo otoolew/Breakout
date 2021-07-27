@@ -2,8 +2,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-[Serializable]
+/// <summary>
+/// Enum for storing Game State. 
+/// </summary>
+[Serializable] 
 public enum GameState
 {
     RUNNING,

@@ -4,6 +4,8 @@
 TagManager:
   serializedVersion: 2
   tags:
+  - MainCanvas
+  - Ball
   - Brick
   layers:
   - Default

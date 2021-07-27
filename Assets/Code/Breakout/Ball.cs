@@ -1,23 +1,51 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
+/// <summary>
+/// The Game Ball
+/// </summary>
 public class Ball : MonoBehaviour
 {
-    [SerializeField, Range(1,40)] private float maxVelocity;
-    public float MaxVelocity { get => maxVelocity; set => maxVelocity = value; }
+    #region Fields and Properties -------------------------------------------------------------------------------------
+    /// <summary>
+    /// The desired ball velocity
+    /// </summary>
+    [SerializeField, Range(10,30)] private float moveSpeed;
     
-    private Vector2 direction;
+    /// <summary>
+    /// The balls movement direction
+    /// </summary>
+    [SerializeField] private Vector2 direction;
     
     [SerializeField] private Bounds bounds;
+    /// <summary>
+    /// The bounds the ball must stay within
+    /// </summary>
     public Bounds Bounds { get => bounds; set => bounds = value; }
+    
+    [SerializeField] private Vector2 startPosition;
+    /// <summary>
+    /// The Starting Position of the Bumper
+    /// </summary>
+    public Vector2 StartPosition { get => startPosition; set => startPosition = value; }
+    #endregion
+
+    #region Delegates -------------------------------------------------------------------------------------------------
+    /// <summary>
+    /// Unity Action that fires when the ball falls into the bottom bounds aka kill zone.
+    /// </summary>
+    public UnityAction BallOutOfBounds;
+    #endregion
+    
     #region Monobehaviour ---------------------------------------------------------------------------------------------
+
     private void Start()
     {
-        direction = Vector2.up;
+        ResetToStartPosition();
     }
-    
+
     private void FixedUpdate()
     {
         Move(direction);
@@ -26,66 +54,84 @@ public class Ball : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D other)
     {
         direction = Vector3.Reflect(direction, other.GetContact(0).normal);
-        if (other.gameObject.CompareTag("Brick"))
-        {
-            Destroy(other.gameObject);
-        }
     }
-    #endregion --------------------------------------------------------------------------------------------------------
+    
+    #endregion 
+
+    #region Ball Movement ---------------------------------------------------------------------------------------------
+    /// <summary>
+    /// Moves the ball in a direction at a set speed.
+    /// </summary>
+    /// <param name="direction">The direction the ball is moving.</param>
     public void Move(Vector2 direction)
     {
         this.direction = direction;
-        
-        transform.Translate(direction * (Time.deltaTime * maxVelocity));
+        // Moves the ball by translating the transform position in a direction over a distance 
+        // determined by multiplying the seconds from the last frame to the current one by desired moveSpeed
+        transform.Translate(direction * (Time.deltaTime * moveSpeed)); 
         
         if (OutOfBounds(out Vector2 normal))
         {
+            // Compensates for over shooting the bounds by placing the ball at the intended point of contact.  
             Vector2 positionCorrection = new Vector2(Mathf.Clamp(transform.position.x, bounds.XMin, bounds.XMax),
                 Mathf.Clamp(transform.position.y, bounds.YMin, bounds.YMax));
 
-            transform.position = positionCorrection;
+            transform.position = positionCorrection; // Move the ball to the corrected position.
             
-            this.direction = Vector2.Reflect(direction, normal.normalized);
-            Debug.DrawRay(transform.position, this.direction * 2, Color.yellow, 600);
+            this.direction = Vector2.Reflect(direction, normal.normalized); // Bounce off the bounds normal. 
         }
     }
-
+    /// <summary>
+    /// Checks if the Game Ball is out of bounds.
+    /// </summary>
+    /// <param name="normal">The Vector2 normal use to calculate the ball bounce.</param>
+    /// <returns>True if ball is out of bounds</returns>
     private bool OutOfBounds(out Vector2 normal)
     {
         Vector2 currentPosition = transform.position;
-        if (currentPosition.x < bounds.XMin)
-        {
-            normal = Vector2.right;
-            return true;
-        }
-        if (currentPosition.x > bounds.XMax)
+        
+        if (currentPosition.x > bounds.XMax) // Out of Right bound
         {
             normal = Vector2.left;
             return true;
         }
-        if (currentPosition.y < bounds.YMin)
+
+        if (currentPosition.x < bounds.XMin) // Out of Left bound
         {
-            normal = Vector2.up;
+            normal = Vector2.right;
             return true;
         }
-        if (currentPosition.y > bounds.YMax)
+        
+        if (currentPosition.y > bounds.YMax) // Out of Top bound
         {
             normal = Vector2.down;
             return true;
         }
-        normal =Vector2.zero; 
+        
+        if (currentPosition.y < bounds.YMin)// Out of Bottom bound. 
+        {
+            direction = Vector3.zero; // Stops ball
+            ResetToStartPosition();
+            BallOutOfBounds?.Invoke();
+        }
+        
+        normal = Vector2.zero; // Set the out to zero
         return false;
     }
     
-    private void OnDrawGizmos()
+    /// <summary>
+    /// Resets the bumper to the start position.
+    /// </summary>
+    public void ResetToStartPosition()
     {
-        Gizmos.color = Color.red;
-        Gizmos.DrawRay(transform.position, direction * 1.0f);
-
-        Gizmos.color = Color.green;
-        Gizmos.DrawLine(new Vector2(bounds.XMin,bounds.YMin),new Vector2(bounds.XMax,bounds.YMin)); // 0-1
-        Gizmos.DrawLine(new Vector2(bounds.XMax,bounds.YMin),new Vector2(bounds.XMax,bounds.YMax)); // 1-2
-        Gizmos.DrawLine(new Vector2(bounds.XMax,bounds.YMax),new Vector2(bounds.XMin,bounds.YMax)); // 2-3
-        Gizmos.DrawLine(new Vector2(bounds.XMin,bounds.YMax),new Vector2(bounds.XMin,bounds.YMin)); // 3-4
+        transform.position = startPosition;
     }
+    /// <summary>
+    /// Resets the bumper to the start position.
+    /// </summary>
+    public void ResetDirection()
+    {
+        direction = Vector2.zero;
+    }
+    #endregion
 }
