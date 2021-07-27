@@ -13,11 +13,12 @@ public class Brick : MonoBehaviour
     public int PointValue { get => pointValue; set => pointValue = value; }
 
     public UnityAction<int> BrickWasHit;
+    
     private void OnCollisionEnter2D(Collision2D other)
     {
         if (other.gameObject.CompareTag("Ball"))
         {
-            Debug.Log("Ball hit me!");
+            SendMessageUpwards("AddScoreValue", pointValue, SendMessageOptions.RequireReceiver);
         }
     }
     private void OnDestroy()

@@ -14,14 +14,14 @@ public class GameMode : MonoBehaviour
     [SerializeField] private GameState gameState;
     public GameState GameState { get => gameState; set => gameState = value; }
     
-    // [SerializeField] private MainCanvas mainCanvas;
-    // public MainCanvas MainCanvas { get => mainCanvas; set => mainCanvas = value; }
+    [SerializeField] private MainCanvas mainCanvas;
+    public MainCanvas MainCanvas { get => mainCanvas; set => mainCanvas = value; }
 
     [SerializeField] private Bumper bumper;
     public Bumper Bumper { get => bumper; set => bumper = value; }
     
     [SerializeField] private Ball ball;
-    public Ball BallPrefab { get => ball; set => ball = value; }
+    public Ball Ball { get => ball; set => ball = value; }
 
     [SerializeField] private LineRenderer borderline;
     public LineRenderer Borderline { get => borderline; set => borderline = value; }
@@ -29,8 +29,12 @@ public class GameMode : MonoBehaviour
     [SerializeField] private int currentScore;
     public int CurrentScore { get => currentScore; set => currentScore = value; }
     
+    [SerializeField] private int hitPoints;
+    public int HitPoints { get => hitPoints; set => hitPoints = value; }
+
     private void Start()
     {
+        mainCanvas.ScorePanel.SetHighScore(gameModeData.HighScore);
         SetUpMatch();
     }
     
@@ -38,39 +42,57 @@ public class GameMode : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            GameManager.Instance.PauseGame();
+            PauseGame();
         }
     }
-
+    
     public void SetUpMatch()
     {
-        borderline.SetPositions(gameModeData.Bounds.BoundingBox);
-        bumper =  Instantiate(gameModeData.BumperPrefab, Vector3.up, Quaternion.identity);
-        bumper.Bounds = gameModeData.Bounds;
-        ball = Instantiate(gameModeData.BallPrefab, bumper.transform.position += Vector3.up, Quaternion.identity);
-        ball.Bounds = gameModeData.Bounds;
-        ball.BallOutOfBounds = ResetMatch;
-        currentScore = 0;
+        gameModeData.SetUpMatch(this);
     }
     
     public void ResetMatch()
     {
-        Debug.Log("Reset Match");
-        StartCoroutine(DelayedReset());
+        gameModeData.ResetMatch(this);
     }
     
-    IEnumerator DelayedReset()
-    {
-        bumper.transform.position = Vector3.up;
-        ball.transform.position = bumper.transform.position += Vector3.up;
-        yield return new WaitForSeconds(1);
-        ball.Move(Vector2.up + Vector2.right);
-    }
-
     public void AddScoreValue(int value)
     {
         currentScore += value;
+        mainCanvas.ScorePanel.SetCurrentScore(currentScore);
+        
+        if (currentScore > gameModeData.HighScore)
+        {
+            gameModeData.HighScore = currentScore;
+            mainCanvas.ScorePanel.SetHighScore(currentScore);
+        }
+        
+        if (gameObject.transform.childCount == 0)
+        {
+            
+        }        
     }
+    
+    #region Game State ------------------------------------------------------------------------------------------------
+    /// <summary>
+    /// Pauses the game.
+    /// </summary>
+    public void PauseGame()
+    {
+        if (gameState == GameState.PAUSED)
+        {
+            mainCanvas.SetPauseMenuActive(false);
+            gameState = GameState.RUNNING;
+            Time.timeScale = 1.0f;
+        }
+        else
+        {
+            mainCanvas.SetPauseMenuActive(true);
+            gameState = GameState.PAUSED;
+            Time.timeScale = 0.0f;
+        }
+    }
+    #endregion
     
     #region Debugging -------------------------------------------------------------------------------------------------
     private void OnDrawGizmos()

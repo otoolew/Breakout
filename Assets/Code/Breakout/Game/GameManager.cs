@@ -26,9 +26,7 @@ public class GameManager : MonoBehaviour
     
     [SerializeField] private GameMode gameMode;
     public GameMode GameMode { get => gameMode; set => gameMode = value; }
-    
 
-    
     #endregion
     
     #region Monobehaviour ---------------------------------------------------------------------------------------------
@@ -53,6 +51,7 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         DontDestroyOnLoad(gameObject);
+        
     }
     
     /// <summary>
@@ -67,33 +66,6 @@ public class GameManager : MonoBehaviour
     }
     #endregion
     
-    #region Game State ------------------------------------------------------------------------------------------------
-    /// <summary>
-    /// Pauses the game.
-    /// </summary>
-    public void PauseGame()
-    {
-        if (gameState == GameState.PAUSED)
-        {
-            mainCanvas.SetPauseMenuActive(true);
-            gameState = GameState.RUNNING;
-            Time.timeScale = 1.0f;
-        }
-        else
-        {
-            mainCanvas.SetPauseMenuActive(false);
-            gameState = GameState.PAUSED;
-            Time.timeScale = 0.0f;
-        }
-    }
-    /// <summary>
-    /// Resumes the game.
-    /// </summary>
-    public void ResumeGame()
-    {
-        gameState = GameState.RUNNING;
-        Time.timeScale = 1.0f;
-    }
     /// <summary>
     /// Quits the game.
     /// </summary>
@@ -105,17 +77,26 @@ public class GameManager : MonoBehaviour
         Application.Quit();
 #endif
     }
-    #endregion
     
     #region Scene Managment -------------------------------------------------------------------------------------------
     public void LoadScene(GameModeData gameModeData)
     {
         SceneManager.LoadSceneAsync(gameModeData.SceneInfo.SceneName).completed += OnSceneLoadComplete;
     }
+
+    public void LoadScene(SceneInfo sceneInfo)
+    {
+        SceneManager.LoadSceneAsync(sceneInfo.SceneName).completed += OnSceneLoadComplete;;
+    }
+    
     private void OnSceneLoadComplete(AsyncOperation obj)
     {
         Debug.Log("Completed Scene Load");
-        gameMode = FindObjectOfType<GameMode>();
+        mainCanvas = FindObjectOfType<MainCanvas>();
+        if (gameMode != null)
+        {
+            
+        }
     }
     
     #endregion

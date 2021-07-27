@@ -9,12 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1d69de70a90c7e149900c089ffc8cf8c, type: 3}
-  m_Name: ClassicModeData
+  m_Script: {fileID: 11500000, guid: 2613639beceed1643bc87cec4340da8b, type: 3}
+  m_Name: EndlessMode
   m_EditorClassIdentifier: 
-  sceneInfo: {fileID: 11400000, guid: 7ca89944aa97e974e92dc492ef1e4691, type: 2}
-  gameModeDescription: "Classic Mode \nUser has a limited amount of balls. Balls
-    are lost when they move below the player bumper."
+  sceneInfo: {fileID: 11400000, guid: ab802b2ee9cbb3c428c020fa113781fc, type: 2}
+  gameModeDescription: 
   bumperPrefab: {fileID: 2278514419669166964, guid: 3f8114b851a35254b8291864f3f344d9, type: 3}
   ballPrefab: {fileID: 7681387979649833551, guid: a0d5fc39932b0b041af1efe51ef05417, type: 3}
   bounds:
@@ -22,5 +21,4 @@ MonoBehaviour:
     xMax: 17.75
     yMin: -2
     yMax: 20
-  ballLimit: 3
-  brickCount: 0
+  highScore: 0

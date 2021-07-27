@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70cb4a88ade3bd347ac87b44e5589bb6, type: 3}
   m_Name: EndlessModeScene
   m_EditorClassIdentifier: 
-  sceneName: 
-  sceneDescription: 
-  Scene: {fileID: 0}
+  sceneName: EndlessModeScene
+  sceneDescription: Endless Mode
+  Scene: {fileID: 102900000, guid: 916a335754b981749bde317741c2478c, type: 3}

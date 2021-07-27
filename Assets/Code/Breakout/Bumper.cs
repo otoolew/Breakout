@@ -50,7 +50,7 @@ public class Bumper : MonoBehaviour
     public void Move(Vector2 direction)
     {
         transform.Translate(direction * (Time.deltaTime * moveSpeed));
-        transform.position = new Vector3(Mathf.Clamp(transform.position.x, bounds.XMin + (bumperSize.x * 0.5f), bounds.XMax - (bumperSize.y * 0.5f)),
+        transform.position = new Vector3(Mathf.Clamp(transform.position.x, bounds.XMin + (bumperSize.x * 0.5f), bounds.XMax - (bumperSize.x * 0.5f)),
             0,0);
     }
     #endregion
@@ -71,8 +71,6 @@ public class Bumper : MonoBehaviour
 
         spriteRenderer.size = bumperSize;
         boxCollider2D.size = bumperSize;
-
     }
-
     #endregion
 }

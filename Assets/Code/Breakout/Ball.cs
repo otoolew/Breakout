@@ -38,12 +38,6 @@ public class Ball : MonoBehaviour
         direction = Vector3.Reflect(direction, other.GetContact(0).normal);
         if (other.gameObject.CompareTag("Brick"))
         {
-            Brick brick = other.collider.GetComponent<Brick>();
-            if (brick != null)
-            {
-                Debug.Log(brick.name + " was hit");
-            }
-
             Destroy(other.gameObject, 0.01f);
         }
     }

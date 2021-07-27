@@ -2,27 +2,33 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Breakout/Game Mode Data", fileName = "newGameMode")]
-public class GameModeData : ScriptableObject
+public abstract class GameModeData : ScriptableObject
 {
-    [SerializeField] private SceneInfo sceneInfo;
-    public SceneInfo SceneInfo { get => sceneInfo; set => sceneInfo = value; }
-    
-    [SerializeField, TextArea] private string gameModeDescription;
-    public string GameModeDescription { get => gameModeDescription; set => gameModeDescription = value; }
+    public abstract SceneInfo SceneInfo { get; set; }
+    public abstract string GameModeDescription { get; set; }
+    protected abstract Bumper BumperPrefab { get; set; }
+    protected abstract Ball BallPrefab { get; set; }
+    public abstract Bounds Bounds { get; set; }
+    public abstract int HighScore {  get; set; }
 
-    [SerializeField] private Bumper bumperPrefab;
-    public Bumper BumperPrefab { get => bumperPrefab; set => bumperPrefab = value; }
+    public virtual void SetUpMatch(GameMode game)
+    {
+        game.Borderline.SetPositions(Bounds.BoundingBox);
+        game.Bumper =  Instantiate(BumperPrefab, Vector3.up, Quaternion.identity);
+        game.Bumper.Bounds = Bounds;
+        
+        game.Ball = Instantiate(BallPrefab, game.Bumper.transform.position += Vector3.up, Quaternion.identity);
+        game.Ball.Bounds = Bounds;
+        game.Ball.BallOutOfBounds = game.ResetMatch;
+        
+        game.CurrentScore = 0;
+        game.MainCanvas.ScorePanel.SetCurrentScore(0);
+        game.MainCanvas.ScorePanel.SetHighScore(HighScore);
+    }
     
-    [SerializeField] private Ball ballPrefab;
-    public Ball BallPrefab { get => ballPrefab; set => ballPrefab = value; }
-
-    [SerializeField] private Bounds bounds;
-    public Bounds Bounds { get => bounds; set => bounds = value; }
-    
-    [SerializeField] private int ballLimit;
-    public int BallLimit { get => ballLimit; set => ballLimit = value; }
-    
-    [SerializeField] private int brickCount;
-    public int BrickCount { get => brickCount; set => brickCount = value; }
+    public virtual void ResetMatch(GameMode game)
+    {
+        game.Bumper.transform.position = Vector3.up;
+        game.Ball.transform.position = game.Bumper.transform.position += Vector3.up;
+    }
 }
