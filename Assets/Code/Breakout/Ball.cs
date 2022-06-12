@@ -50,10 +50,14 @@ public class Ball : MonoBehaviour
     {
         Move(direction);
     }
-    
+    /// <summary>
+    /// Called on Physics collision. This is a collision so that we can use information in the Collider2D
+    /// </summary>
+    /// <param name="other"></param>
     private void OnCollisionEnter2D(Collision2D other)
     {
-        direction = Vector3.Reflect(direction, other.GetContact(0).normal);
+        
+        direction = Vector3.Reflect(direction, other.GetContact(0).point);
     }
     
     #endregion 
@@ -82,7 +86,7 @@ public class Ball : MonoBehaviour
         }
     }
     /// <summary>
-    /// Checks if the Game Ball is out of bounds.
+    /// Checks if the Game Ball is out of bounds. Could be move to the GameMode or Manager.
     /// </summary>
     /// <param name="normal">The Vector2 normal use to calculate the ball bounce.</param>
     /// <returns>True if ball is out of bounds</returns>
