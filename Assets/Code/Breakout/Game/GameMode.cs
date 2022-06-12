@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+
 /// <summary>
 /// The Monobehaviour that runs the GameModeData
 /// </summary>
@@ -153,6 +154,8 @@ public class GameMode : MonoBehaviour
     /// </summary>
     public void PauseGame()
     {
+        float currentScale = Time.timeScale;
+        Debug.Log(Time.timeScale + " : TimeScale");
         if (gameState == GameState.PAUSED)
         {
             mainCanvas.SetPauseMenuActive(false);

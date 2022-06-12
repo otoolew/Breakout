@@ -14,6 +14,7 @@ public class Brick : MonoBehaviour
     #endregion
     
     #region Monobehaviour ---------------------------------------------------------------------------------------------
+
     private void OnCollisionEnter2D(Collision2D other)
     {
         if (other.gameObject.CompareTag("Ball")) // If the other gameobject has tag "Ball" it must be the ball 
